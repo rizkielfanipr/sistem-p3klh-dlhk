@@ -24,3 +24,11 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
+
+Route::get('/dashboard', function () {
+    return view('dashboard.pages.dashboard');
+})->name('dashboard');
+
+Route::get('/dashboard/penapisan-dokling', function () {
+    return view('dashboard.pages.layanan.dokling');
+})->name('penapisan-dokling');
