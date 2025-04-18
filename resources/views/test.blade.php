@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Tailwind</title>
+    <title>Pelayanan Persetujuan Lingkungan</title>
     
     <!-- Vite CSS and JS -->
     @vite('resources/css/app.css')
@@ -14,10 +14,12 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 text-gray-800 font-montserrat">
+<body class="font-montserrat">
 
     <!-- Panggil Komponen Navbar -->
     <x-navbar />
+    <x-hero />
+    <x-menu />
 
 </body>
 
