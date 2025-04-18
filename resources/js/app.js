@@ -1,7 +1,6 @@
-// Mengimpor Alpine.js
 import Alpine from 'alpinejs';
-window.Alpine = Alpine;
-Alpine.start();
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Mengimpor Font Awesome
 
-// Mengimpor FontAwesome
-import '@fortawesome/fontawesome-free/js/all';
+window.Alpine = Alpine;
+
+Alpine.start();

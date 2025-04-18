@@ -12,6 +12,8 @@
 
     <!-- Optional: Laravel Mix for additional assets -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
 </head>
 
 <body class="font-montserrat">
@@ -20,6 +22,9 @@
     <x-navbar />
     <x-hero />
     <x-menu />
+    <x-news />
+    <x-faq />
+    <x-footer />
 
 </body>
 

@@ -45,7 +45,7 @@ $services = [
 
 <section class="relative bg-white h-[550px] md:h-[100px]">
   <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-              w-11/12 md:w-4/5 lg:w-3/4 bg-white rounded-lg shadow-lg border border-gray-200 
+              w-11/12 md:w-4/5 lg:w-3/4 bg-white rounded-lg border border-gray-300 
               p-4 md:p-6 z-10">
     <h2 class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-6">
       Informasi Persetujuan Lingkungan
