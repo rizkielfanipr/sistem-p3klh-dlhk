@@ -27,12 +27,12 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Dashboard Route dengan Middleware Auth
+// Route Dashboard yang dilindungi
 Route::get('/dashboard', function () {
     return view('dashboard.pages.dashboard');
 })->middleware('auth')->name('dashboard');
 
-// Route untuk halaman lain di dashboard
+// Route lainnya
 Route::get('/dashboard/penapisan-dokling', function () {
     return view('dashboard.pages.layanan.dokling');
-})->name('penapisan-dokling');
+})->middleware('auth')->name('penapisan-dokling');
