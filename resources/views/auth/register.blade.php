@@ -16,10 +16,21 @@
 
             <h2 class="text-xl font-semibold text-left py-4">Daftar Akun</h2>
             
-            <form action="#" method="POST">
+            <form action="{{ route('register') }}" method="POST">
                 @csrf
+                <!-- Input untuk Nama -->
+                @component('components.input', ['name' => 'nama', 'label' => 'Nama', 'type' => 'text']) @endcomponent
+
+                <!-- Input untuk Nomor Telepon -->
+                @component('components.input', ['name' => 'no_telp', 'label' => 'Nomor Telepon', 'type' => 'text']) @endcomponent
+
+                <!-- Input untuk Email -->
                 @component('components.input', ['name' => 'email', 'label' => 'Email', 'type' => 'email']) @endcomponent
+
+                <!-- Input untuk Password -->
                 @component('components.password', ['name' => 'password', 'label' => 'Password']) @endcomponent
+
+                <!-- Input untuk Konfirmasi Password -->
                 @component('components.password', ['name' => 'password_confirmation', 'label' => 'Konfirmasi Password']) @endcomponent
 
                 <div class="flex items-center justify-between">

@@ -16,7 +16,7 @@
 
             <h2 class="text-xl font-semibold text-left py-4">Masuk Akun</h2>
             
-            <form action="#" method="POST">
+            <form action="{{ route('login') }}" method="POST">
                 @csrf
                 @component('components.input', ['name' => 'email', 'label' => 'Email', 'type' => 'email']) @endcomponent
 
