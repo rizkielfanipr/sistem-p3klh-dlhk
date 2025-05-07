@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.adminlayout')
 
-@section('title', 'Tambah ')
+@section('title', 'Tambah Pengguna')
 
 @section('content')
     <div>
