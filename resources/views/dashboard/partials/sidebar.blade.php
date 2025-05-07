@@ -26,9 +26,9 @@ $menus = [
         'label' => 'Pengguna',
         'icon' => 'fas fa-users',
         'sub' => [
-            ['label' => 'Admin', 'route' => '#'], 
-            ['label' => 'Front Office', 'route' => '#'],
-            ['label' => 'Pengguna', 'route' => '#']
+            ['label' => 'Admin', 'route' => 'users.admin'], // Rute untuk daftar admin
+            ['label' => 'Front Office', 'route' => 'users.fo'], // Rute untuk daftar front office
+            ['label' => 'Pengguna', 'route' => 'users.pengguna'], // Rute untuk daftar pengguna
         ]
     ],
     [

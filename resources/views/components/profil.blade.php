@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="max-w-3xl bg-white border border-gray-200 rounded-lg p-6 mt-6">
-    <h2 class="text-2xl font-semibold mb-4">Profil Saya</h2>
 
     @if(session('success'))
         <div class="bg-green-500 text-white p-2 rounded mb-4">
