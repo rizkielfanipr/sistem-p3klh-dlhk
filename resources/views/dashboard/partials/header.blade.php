@@ -1,11 +1,23 @@
-<header class="fixed top-0 left-0 right-0 bg-white shadow px-4 py-3 flex items-center justify-between z-10">
+<header class="fixed top-0 left-0 right-0 bg-white border border-b-gray-300 px-4 py-3 flex items-center justify-between z-10">
     <button class="text-gray-600 focus:outline-none md:hidden" @click="sidebarOpen = !sidebarOpen">
         <i class="fas fa-bars"></i>
     </button>
 
     <div class="flex items-center gap-3 ml-auto relative" x-data="{ dropdownOpen: false }">
         <span class="text-gray-600 hidden md:block">
-            Hello, {{ Auth::user()->nama ?? 'User' }}
+            @php
+                $hour = now()->timezone('Asia/Jakarta')->format('H'); // Mendapatkan jam saat ini (format 24 jam)
+                if ($hour >= 5 && $hour < 12) {
+                    $greeting = 'Selamat Pagi';
+                } elseif ($hour >= 11 && $hour < 15) {
+                    $greeting = 'Selamat Siang';
+                } elseif ($hour >= 15 && $hour < 19) {
+                    $greeting = 'Selamat Sore';
+                } else {
+                    $greeting = 'Selamat Malam';
+                }
+            @endphp
+            {{ $greeting }}, {{ Auth::user()->nama ?? 'User' }}
         </span>
 
         <button @click="dropdownOpen = !dropdownOpen" class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 bg-gray-200 flex items-center justify-center">
