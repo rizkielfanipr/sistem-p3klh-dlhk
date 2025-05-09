@@ -33,8 +33,9 @@
             <x-form.textarea
                 name="konten"
                 label="Isi Informasi"
-                required>{{ $informasi->konten }}
-            </x-form.textarea>
+                :value="$informasi->konten"
+                required
+            />
 
             {{-- Lampiran --}}
             <div>

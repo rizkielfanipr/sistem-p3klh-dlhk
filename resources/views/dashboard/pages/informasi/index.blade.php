@@ -36,11 +36,13 @@
 
     <x-table>
         <x-slot name="head">
-            @foreach ($tableHeadings as $heading)
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {{ $heading }}
-                </th>
-            @endforeach
+            <tr>
+                @foreach ($tableHeadings as $heading)
+                    <th class="px-6 py-3 text-{{ $heading === 'Aksi' ? 'center' : 'left' }} text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ $heading }}
+                    </th>
+                @endforeach
+            </tr>
         </x-slot>
         <x-slot name="body">
             @foreach($informasi as $item)
@@ -55,7 +57,7 @@
                         </td>
                     @endforeach
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <div class="flex justify-center space-x-2">
+                        <div class="inline-flex items-center justify-center space-x-2">
                             <x-button-edit :href="route('informasi.edit', $item->id)" />
                             <x-button-delete :action="route('informasi.destroy', $item->id)" />
                         </div>

@@ -9,7 +9,17 @@ $bgColor = match ($type) {
 };
 @endphp
 
-<div class="{{ $bgColor }} px-4 py-3 rounded relative mb-4" role="alert">
+<div id="alert-message" class="{{ $bgColor }} px-4 py-3 rounded relative mb-4" role="alert">
     <strong class="font-bold">{{ ucfirst($type) }}!</strong>
     <span class="block sm:inline">{{ $message }}</span>
 </div>
+
+<script>
+    // Set the alert to disappear after 5 seconds
+    setTimeout(function() {
+        const alert = document.getElementById('alert-message');
+        if (alert) {
+            alert.style.display = 'none';
+        }
+    }, 5000);
+</script>

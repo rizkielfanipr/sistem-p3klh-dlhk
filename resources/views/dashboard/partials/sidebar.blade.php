@@ -40,7 +40,7 @@ $menus = [
     [
         'label' => 'Forum Diskusi',
         'icon' => 'fas fa-users text-indigo-500',
-        'route' => '#',
+        'route' => 'forum.index',
     ]
 ];
 ?>
