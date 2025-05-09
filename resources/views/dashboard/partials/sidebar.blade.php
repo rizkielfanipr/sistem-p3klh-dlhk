@@ -13,7 +13,7 @@ $menus = [
     [
         'label' => 'Pengumuman',
         'icon' => 'fas fa-bullhorn text-yellow-500',
-        'route' => '#',
+        'route' => 'informasi.pengumuman',
     ],
     [
         'label' => 'Pengguna',
@@ -27,7 +27,7 @@ $menus = [
     [
         'label' => 'Publikasi',
         'icon' => 'fas fa-newspaper text-purple-500',
-        'route' => '#',
+        'route' => 'informasi.publikasi',
     ],
     [
         'label' => 'Konsultasi',

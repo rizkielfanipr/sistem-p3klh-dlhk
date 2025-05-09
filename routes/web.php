@@ -5,11 +5,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\LayananController;
+use App\Http\Controllers\InformasiController;
 
 /*
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 | Web Routes
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 |
 | Tempat untuk mendefinisikan semua rute aplikasi web. Rute ini
 | dimuat oleh RouteServiceProvider dan dikelompokkan dengan middleware 'web'.
@@ -73,4 +74,26 @@ Route::middleware(['auth'])->group(function () {
 
     // Upload gambar melalui Quill editor
     Route::post('/layanan/upload-image', [LayananController::class, 'uploadImage'])->name('layanan.uploadImage');
+});
+
+// Rute Manajemen Informasi (Harus Login)
+Route::middleware(['auth'])->group(function () {
+    
+    // Menampilkan form untuk membuat informasi baru
+    Route::get('/informasi/create', [InformasiController::class, 'create'])->name('informasi.create');
+
+    // Menyimpan informasi baru
+    Route::post('/informasi', [InformasiController::class, 'store'])->name('informasi.store');
+
+    // Menampilkan form untuk mengedit informasi
+    Route::get('/informasi/{id}/edit', [InformasiController::class, 'edit'])->name('informasi.edit');
+
+    // Mengupdate informasi
+    Route::put('/informasi/{id}', [InformasiController::class, 'update'])->name('informasi.update');
+
+    // Menghapus informasi
+    Route::delete('/informasi/{id}', [InformasiController::class, 'destroy'])->name('informasi.destroy');
+
+    Route::get('/informasi/pengumuman', [InformasiController::class, 'pengumuman'])->name('informasi.pengumuman');
+Route::get('/informasi/publikasi', [InformasiController::class, 'publikasi'])->name('informasi.publikasi');
 });
