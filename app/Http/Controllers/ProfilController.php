@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // Import Storage facade
+use Illuminate\Support\Facades\Storage;
 
 class ProfilController extends Controller
 {
     public function index()
     {
-        // Ambil data user yang sedang login
         $user = Auth::user();
         return view('components.profil', compact('user'));
     }
@@ -19,39 +18,37 @@ class ProfilController extends Controller
     {
         $user = Auth::user();
 
-        // Validasi input yang diterima, termasuk file foto
+        // Validasi input
         $request->validate([
             'nama' => 'required|string|max:255',
             'no_telp' => 'nullable|string|max:20',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi file foto
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Update nama dan no_telp
+        // Update data
         $user->nama = $request->nama;
         $user->no_telp = $request->no_telp;
 
-        // Proses upload dan update foto jika ada
+        // Hapus foto jika diminta
         if ($request->has('hapus_foto') && $request->hapus_foto == 1) {
-            // Hapus foto lama jika ada
-            if ($user->foto && Storage::exists($user->foto)) {
-                Storage::delete($user->foto);
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
             }
-            $user->foto = null; // Set kolom foto di database menjadi null
-        } else if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($user->foto && Storage::exists($user->foto)) {
-                Storage::delete($user->foto);
-            }
-            // Simpan foto baru
-            $path = $request->file('foto')->store('profile_photos', 'public'); // Simpan di direktori storage/app/public/profile_photos
-            $user->foto = $path; // Simpan path ke database
+            $user->foto = null;
         }
 
+        // Upload dan simpan foto baru
+        if ($request->hasFile('foto')) {
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
 
-        // Simpan perubahan
+            $path = $request->file('foto')->store('profile_photos', 'public');
+            $user->foto = $path; // Hanya simpan path relatif ke 'storage'
+        }
+
         $user->save();
 
-        // Kembalikan ke halaman profil dengan pesan sukses
         return back()->with('success', 'Profil berhasil diperbarui.');
     }
 }

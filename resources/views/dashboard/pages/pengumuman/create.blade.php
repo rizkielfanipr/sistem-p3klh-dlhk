@@ -1,34 +1,26 @@
 @extends('dashboard.layouts.adminlayout')
 
-@section('title', 'Tambah Informasi')
+@section('title', 'Tambah Pengumuman')
 
 @section('content')
     <form 
-        action="{{ route('informasi.store') }}" 
+        action="{{ route('pengumuman.store') }}" 
         method="POST" 
         enctype="multipart/form-data" 
         class="space-y-4">
         @csrf
 
-        {{-- Jenis Informasi --}}
-        <x-form.select
-            name="jenis_informasi_id"
-            :options="$jenisInformasi->pluck('nama_jenis', 'id')"
-            label="Jenis Informasi"
-            required
-        />
-
         {{-- Judul --}}
         <x-form.input 
             name="judul" 
-            label="Judul Informasi" 
+            label="Judul Pengumuman" 
             required 
         />
 
         {{-- Konten --}}
         <x-form.textarea 
             name="konten" 
-            label="Isi Informasi" 
+            label="Isi Pengumuman" 
             required 
         />
 
@@ -41,11 +33,11 @@
         {{-- Tombol Aksi --}}
         <div class="flex items-center space-x-4">
             <x-form.button>Simpan</x-form.button>
-            <x-form.button href="{{ route('informasi.pengumuman') }}">Batal</x-form.button>
+            <x-form.button href="{{ route('pengumuman.index') }}">Batal</x-form.button>
         </div>
     </form>
 
-    {{-- Preview gambar (jika dibutuhkan) --}}
+    {{-- Preview gambar --}}
     <script>
         document.getElementById('lampiran')?.addEventListener('change', function (event) {
             const preview = document.getElementById('preview');

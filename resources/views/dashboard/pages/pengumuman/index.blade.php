@@ -1,24 +1,12 @@
 @extends('dashboard.layouts.adminlayout')
 
-@section('title')
-    @if (request()->routeIs('informasi.pengumuman'))
-        Daftar Pengumuman
-    @elseif (request()->routeIs('informasi.publikasi'))
-        Daftar Publikasi
-    @endif
-@endsection
+@section('title', 'Daftar Pengumuman')
 
 @section('content')
     <div>
-        @if (request()->routeIs('informasi.pengumuman'))
-            <x-button-add href="{{ route('informasi.create') }}?jenis=pengumuman">
-                Tambah Pengumuman
-            </x-button-add>
-        @elseif (request()->routeIs('informasi.publikasi'))
-            <x-button-add href="{{ route('informasi.create') }}?jenis=publikasi">
-                Tambah Publikasi
-            </x-button-add>
-        @endif
+        <x-button-add href="{{ route('pengumuman.create') }}">
+            Tambah Pengumuman
+        </x-button-add>
     </div>
 
     @if(session('success'))
@@ -30,8 +18,10 @@
     @endif
 
     @php
-        $tableHeadings = ['Judul', 'Jenis Informasi', 'Tanggal', 'Aksi'];
-        $informasiProperties = ['judul', 'jenisInformasi.nama_jenis', 'tanggal'];
+        use Illuminate\Support\Str;
+
+        $tableHeadings = ['Judul', 'Tanggal', 'Konten', 'Aksi'];
+        $pengumumanProperties = ['judul', 'tanggal', 'konten'];
     @endphp
 
     <x-table>
@@ -45,12 +35,14 @@
             </tr>
         </x-slot>
         <x-slot name="body">
-            @foreach($informasi as $item)
+            @foreach($pengumuman as $item)
                 <tr>
-                    @foreach ($informasiProperties as $property)
+                    @foreach ($pengumumanProperties as $property)
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             @if ($property === 'tanggal')
                                 {{ \Carbon\Carbon::parse(data_get($item, $property))->format('d M Y') }}
+                            @elseif ($property === 'konten')
+                                {{ Str::limit(strip_tags(data_get($item, $property)), 100) }}
                             @else
                                 {{ data_get($item, $property) }}
                             @endif
@@ -58,8 +50,8 @@
                     @endforeach
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div class="inline-flex items-center justify-center space-x-2">
-                            <x-button-edit :href="route('informasi.edit', $item->id)" />
-                            <x-button-delete :action="route('informasi.destroy', $item->id)" />
+                            <x-button-edit :href="route('pengumuman.edit', $item->id)" />
+                            <x-button-delete :action="route('pengumuman.destroy', $item->id)" />
                         </div>
                     </td>
                 </tr>

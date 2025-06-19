@@ -6,34 +6,16 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    /**
-     * Role Model
-     *
-     * @var Role
-     */
-    private $role;
-
-    /**
-     * UserController constructor.
-     *
-     * @param Role $role
-     */
-    public function __construct(Role $role)
+    public function index()
     {
-        $this->role = $role;
+        return redirect()->route('users.admin');
     }
 
-    /**
-     * Display a listing of admin users.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indexAdmin()
     {
         $users = User::where('role_id', 1)->get();
@@ -44,11 +26,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of front office users.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indexFrontOffice()
     {
         $users = User::where('role_id', 2)->get();
@@ -59,11 +36,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of regular users.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indexPengguna()
     {
         $users = User::where('role_id', 3)->get();
@@ -74,192 +46,128 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new user.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function indexPenelaah()
+    {
+        $users = User::where('role_id', 4)->get();
+        return view('users.index', [
+            'users' => $users,
+            'title' => 'Daftar Penelaah',
+            'buttonText' => 'Penelaah',
+        ]);
+    }
+
     public function create()
     {
-        $roles = $this->role->all();
+        $roles = Role::all();
         return view('users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created user in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nama'      => 'required|string|max:255',
-            'email'     => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role_id'   => 'required|exists:roles,id',
-            'no_telp'   => 'nullable|string|max:20',
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:20',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'role_id' => 'required|exists:roles,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('foto_users', 'public');
         }
 
-        try {
-            DB::beginTransaction();
-            try {
-                $user = User::create([
-                    'nama'      => $request->nama,
-                    'email'     => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role_id'   => $request->role_id,
-                    'no_telp'   => $request->no_telp,
-                ]);
-                DB::commit();
+        User::create([
+            'nama' => $request->nama,
+            'no_telp' => $request->no_telp,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role_id' => $request->role_id,
+            'foto' => $fotoPath,
+        ]);
 
-                // Redirect ke route yang sesuai berdasarkan role_id
-                switch ($request->role_id) {
-                    case 1:
-                        return redirect()->route('users.admin')->with('success', 'Admin berhasil ditambahkan.');
-                    case 2:
-                        return redirect()->route('users.fo')->with('success', 'Front Office berhasil ditambahkan.');
-                    case 3:
-                        return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil ditambahkan.');
-                    default:
-                        // Jika role_id tidak valid, redirect ke halaman default atau tampilkan pesan error
-                        return redirect()->route('home')->with('error', 'Role pengguna tidak valid.'); // Atau ke route lain yang sesuai
-                }
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Error creating user: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan ke database: ' . $e->getMessage())->withInput();
-            }
-        } catch (\Exception $e) {
-            Log::error('Database transaction error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan pada transaksi database: ' . $e->getMessage())->withInput();
+        switch ($request->role_id) {
+            case 1:
+                return redirect()->route('users.admin')->with('success', 'Admin berhasil ditambahkan.');
+            case 2:
+                return redirect()->route('users.fo')->with('success', 'Front Office berhasil ditambahkan.');
+            case 3:
+                return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil ditambahkan.');
+            case 4:
+                return redirect()->route('users.penelaah')->with('success', 'Penelaah berhasil ditambahkan.');
+            default:
+                return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
         }
     }
 
-    /**
-     * Display the specified user.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function edit(User $user)
     {
-        $user = User::findOrFail($id);
-        return view('users.show', compact('user'));
-    }
-
-    /**
-     * Show the form for editing the specified user.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $user  = User::findOrFail($id);
-        $roles = $this->role->all();
+        $roles = Role::all();
         return view('users.edit', compact('user', 'roles'));
     }
 
-    /**
-     * Update the specified user in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'nama'      => 'required|string|max:255',
-            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'role_id'   => 'required|exists:roles,id',
-            'no_telp'   => 'nullable|string|max:20',
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:20',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+            'role_id' => 'required|exists:roles,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        if ($request->hasFile('foto')) {
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            $user->foto = $request->file('foto')->store('foto_users', 'public');
         }
 
-        try {
-            DB::beginTransaction();
-            try {
-                $user->nama      = $request->nama;
-                $user->email     = $request->email;
-                $user->role_id = $request->role_id;
-                $user->no_telp = $request->no_telp;
+        $user->update([
+            'nama' => $request->nama,
+            'no_telp' => $request->no_telp,
+            'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+            'role_id' => $request->role_id,
+            'foto' => $user->foto,
+        ]);
 
-                if ($request->filled('password')) {
-                    $user->password = Hash::make($request->password);
-                }
-
-                $user->save();
-                DB::commit();
-
-                // Redirect berdasarkan role_id yang diupdate
-                switch ($user->role_id) {
-                    case 1:
-                        return redirect()->route('users.admin')->with('success', 'Admin berhasil diperbarui.');
-                    case 2:
-                        return redirect()->route('users.fo')->with('success', 'Front Office berhasil diperbarui.');
-                    case 3:
-                        return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil diperbarui.');
-                    default:
-                        return redirect()->route('home')->with('error', 'Role pengguna tidak valid.');
-                }
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Error updating user: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui pengguna: ' . $e->getMessage());
-            }
-        } catch (\Exception $e) {
-            Log::error('Database transaction error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan pada transaksi database: ' . $e->getMessage());
+        switch ($user->role_id) {
+            case 1:
+                return redirect()->route('users.admin')->with('success', 'Admin berhasil diperbarui.');
+            case 2:
+                return redirect()->route('users.fo')->with('success', 'Front Office berhasil diperbarui.');
+            case 3:
+                return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil diperbarui.');
+            case 4:
+                return redirect()->route('users.penelaah')->with('success', 'Penelaah berhasil diperbarui.');
+            default:
+                return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
         }
     }
 
-    /**
-     * Remove the specified user from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
-        $roleId = $user->role_id; // Simpan role_id sebelum dihapus
+        if ($user->foto) {
+            Storage::disk('public')->delete($user->foto);
+        }
 
-        try {
-            DB::beginTransaction();
-            try {
-                $user->delete();
-                DB::commit();
-                // Redirect berdasarkan role_id yang dihapus
-                switch ($roleId) {
-                    case 1:
-                        return redirect()->route('users.admin')->with('success', 'Admin berhasil dihapus.');
-                    case 2:
-                        return redirect()->route('users.fo')->with('success', 'Front Office berhasil dihapus.');
-                    case 3:
-                        return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil dihapus.');
-                    default:
-                        return redirect()->route('home')->with('error', 'Role pengguna tidak valid.');
-                }
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Error deleting user: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus pengguna: ' . $e->getMessage());
-            }
-        } catch (\Exception $e) {
-            Log::error('Database transaction error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan pada transaksi database: ' . $e->getMessage());
+        $role_id = $user->role_id;
+        $user->delete();
+
+        switch ($role_id) {
+            case 1:
+                return redirect()->route('users.admin')->with('success', 'Admin berhasil dihapus.');
+            case 2:
+                return redirect()->route('users.fo')->with('success', 'Front Office berhasil dihapus.');
+            case 3:
+                return redirect()->route('users.pengguna')->with('success', 'Pengguna berhasil dihapus.');
+            case 4:
+                return redirect()->route('users.penelaah')->with('success', 'Penelaah berhasil dihapus.');
+            default:
+                return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
         }
     }
 }

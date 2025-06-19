@@ -14,17 +14,19 @@
     <div class="flex gap-8">
         <!-- Foto Profil dan Tombol -->
         <div class="w-1/4 flex flex-col items-center gap-4">
-            <img id="foto-profil" src="{{ $user->foto ? asset('storage/' . $user->foto) : asset('images/default_profile.png') }}" alt="Foto Profil"
-                class="w-full h-full max-w-xs max-h-xs rounded-lg object-cover border border-gray-300">
-                <div class="flex gap-2 w-full">
-    <label for="foto" class="w-full bg-transparent text-gray-700 px-4 py-2 rounded cursor-pointer hover:bg-gray-100 text-sm text-center border border-dashed border-gray-400">
-        Update Photo
-    </label>
-    <button id="hapus-foto" type="button" class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm text-center">
-        Hapus Foto
-    </button>
-</div>
-
+            <img id="foto-profil" 
+                 src="{{ $user->foto && file_exists(public_path('storage/' . $user->foto)) ? asset('storage/' . $user->foto) : asset('images/default_profile.png') }}" 
+                 alt="Foto Profil"
+                 class="w-full h-full max-w-xs max-h-xs rounded-lg object-cover border border-gray-300">
+            
+            <div class="flex gap-2 w-full">
+                <label for="foto" class="w-full bg-transparent text-gray-700 px-4 py-2 rounded cursor-pointer hover:bg-gray-100 text-sm text-center border border-dashed border-gray-400">
+                    Update Photo
+                </label>
+                <button id="hapus-foto" type="button" class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm text-center">
+                    Hapus Foto
+                </button>
+            </div>
         </div>
 
         <!-- Form Data Pengguna -->
@@ -61,7 +63,7 @@
 
                     <input type="file" name="foto" id="foto" class="hidden" accept="image/*">
                 </div>
-                
+
                 <div class="flex gap-4">
                     <button type="submit" class="w-1/2 bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 text-sm">Simpan</button>
                     <a href="#" class="w-1/2 bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600 text-sm text-center flex items-center justify-center">Ganti Password</a>
@@ -83,20 +85,23 @@ function hapusFoto() {
     const form = document.getElementById('form-profil');
 
     // Set foto profil menjadi default
-    img.src = "{{ asset('/default-profile.jpg') }}";
+    img.src = "{{ asset('images/default_profile.png') }}";
     
     // Clear input file
     inputFoto.value = '';
 
     // Tambahkan input hidden untuk menandakan penghapusan foto
-    const inputHapusFoto = document.createElement('input');
-    inputHapusFoto.type = 'hidden';
-    inputHapusFoto.name = 'hapus_foto'; // Nama input ini akan kita cek di controller
-    inputHapusFoto.value = '1';
-    form.appendChild(inputHapusFoto);
+    let inputHapusFoto = document.querySelector('input[name="hapus_foto"]');
+    if (!inputHapusFoto) {
+        inputHapusFoto = document.createElement('input');
+        inputHapusFoto.type = 'hidden';
+        inputHapusFoto.name = 'hapus_foto';
+        inputHapusFoto.value = '1';
+        form.appendChild(inputHapusFoto);
+    }
 }
 
-// Tambahkan event listener untuk input file
+// Preview gambar saat upload
 document.getElementById('foto').addEventListener('change', function(e) {
     const img = document.getElementById('foto-profil');
     const file = e.target.files[0];
@@ -108,7 +113,7 @@ document.getElementById('foto').addEventListener('change', function(e) {
         }
         reader.readAsDataURL(file);
     } else {
-        img.src = "{{ asset('/default-profile.jpg') }}";
+        img.src = "{{ asset('images/default_profile.png') }}";
     }
 });
 </script>
