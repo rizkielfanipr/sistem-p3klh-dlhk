@@ -29,6 +29,8 @@ Route::get('/dashboard', fn () => view('dashboard.pages.dashboard'))->middleware
 Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::post('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
+    Route::get('/profil/ganti-password', [ProfilController::class, 'showChangePasswordForm'])->name('profil.password.form');
+    Route::post('/profil/ganti-password', [ProfilController::class, 'changePassword'])->name('profil.password.update');
 });
 
 // Manajemen pengguna

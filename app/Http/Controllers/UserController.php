@@ -19,7 +19,7 @@ class UserController extends Controller
     public function indexAdmin()
     {
         $users = User::where('role_id', 1)->get();
-        return view('users.index', [
+        return view('dashboard.pages.users.index', [
             'users' => $users,
             'title' => 'Daftar Admin',
             'buttonText' => 'Admin',
@@ -29,7 +29,7 @@ class UserController extends Controller
     public function indexFrontOffice()
     {
         $users = User::where('role_id', 2)->get();
-        return view('users.index', [
+        return view('dashboard.pages.users.index', [
             'users' => $users,
             'title' => 'Daftar Front Office',
             'buttonText' => 'Front Office',
@@ -39,7 +39,7 @@ class UserController extends Controller
     public function indexPengguna()
     {
         $users = User::where('role_id', 3)->get();
-        return view('users.index', [
+        return view('dashboard.pages.users.index', [
             'users' => $users,
             'title' => 'Daftar Pengguna',
             'buttonText' => 'Pengguna',
@@ -49,7 +49,7 @@ class UserController extends Controller
     public function indexPenelaah()
     {
         $users = User::where('role_id', 4)->get();
-        return view('users.index', [
+        return view('dashboard.pages.users.index', [
             'users' => $users,
             'title' => 'Daftar Penelaah',
             'buttonText' => 'Penelaah',
@@ -59,7 +59,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', compact('roles'));
+        return view('dashboard.pages.users.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -104,7 +104,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
+        return view('dashboard.pages.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)

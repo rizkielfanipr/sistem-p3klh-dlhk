@@ -66,7 +66,7 @@
 
                 <div class="flex gap-4">
                     <button type="submit" class="w-1/2 bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 text-sm">Simpan</button>
-                    <a href="#" class="w-1/2 bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600 text-sm text-center flex items-center justify-center">Ganti Password</a>
+                    <a href="{{ route('profil.password.form') }}" class="w-1/2 bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600 text-sm text-center flex items-center justify-center">Ganti Password</a>
                 </div>
             </form>
         </div>

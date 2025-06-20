@@ -20,8 +20,8 @@
     @php
         use Illuminate\Support\Str;
 
-        $tableHeadings = ['Judul', 'Tanggal', 'Konten', 'Aksi'];
-        $pengumumanProperties = ['judul', 'tanggal', 'konten'];
+        $tableHeadings = ['Judul', 'Konten', 'Tanggal', 'Aksi'];
+        $pengumumanProperties = ['judul', 'konten', 'tanggal'];
     @endphp
 
     <x-table>
@@ -34,9 +34,11 @@
                 @endforeach
             </tr>
         </x-slot>
+
         <x-slot name="body">
             @foreach($pengumuman as $item)
                 <tr>
+                    {{-- Judul, Konten, Tanggal --}}
                     @foreach ($pengumumanProperties as $property)
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             @if ($property === 'tanggal')
@@ -48,6 +50,8 @@
                             @endif
                         </td>
                     @endforeach
+
+                    {{-- Aksi --}}
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div class="inline-flex items-center justify-center space-x-2">
                             <x-button-edit :href="route('pengumuman.edit', $item->id)" />
