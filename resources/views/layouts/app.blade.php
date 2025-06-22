@@ -9,6 +9,8 @@
     <!-- Vite CSS and JS -->
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
+    @stack('scripts')
+
 
     <!-- Optional: Laravel Mix for additional assets -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">

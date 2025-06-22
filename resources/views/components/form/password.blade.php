@@ -1,33 +1,53 @@
-@props(['name', 'label', 'placeholder' => ''])
+@props([
+    'name',
+    'required' => false,
+    'value' => '',
+    'label' => null,
+    'placeholder' => '',
+])
 
 <div class="mb-4">
-    <label for="{{ $name }}" class="block text-gray-700 text-sm font-bold mb-2">{{ $label }}</label>
+    {{-- Label --}}
+    <label for="{{ $name }}" class="block mb-1 text-sm font-medium text-gray-700">
+        {{ $label ?? ucwords(str_replace('_', ' ', $name)) }}
+    </label>
+
     <div class="relative">
+        {{-- Input --}}
         <input
             type="password"
             name="{{ $name }}"
             id="{{ $name }}"
-            class="appearance-none border border-gray-200 rounded w-full py-2 pr-8 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}"
-            {{ $attributes }}
+            {{ $required ? 'required' : '' }}
+            class="appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 pr-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+
+        {{-- Toggle Icon --}}
+        <div
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 cursor-pointer"
+            onclick="togglePassword('{{ $name }}')"
         >
-        <div class="absolute inset-y-0 right-2 flex items-center cursor-pointer">
-            <i id="toggle{{ Str::ucfirst($name) }}" class="fas fa-eye text-gray-500 p-3"></i>
+            <i id="icon-{{ $name }}" class="fa-solid fa-eye"></i>
         </div>
     </div>
-    @error($name)
-        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-    @enderror
+
+    {{-- Error --}}
+    <x-form.error :name="$name" />
 </div>
 
-<script>
-    const toggle{{ Str::ucfirst($name) }} = document.querySelector('#toggle{{ Str::ucfirst($name) }}');
-    const {{ $name }}Input = document.querySelector('#{{ $name }}');
-
-    toggle{{ Str::ucfirst($name) }}.addEventListener('click', function (e) {
-        const type = {{ $name }}Input.getAttribute('type') === 'password' ? 'text' : 'password';
-        {{ $name }}Input.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
-</script>
+@once
+    @push('scripts')
+        <script>
+            function togglePassword(id) {
+                const input = document.getElementById(id);
+                const icon = document.getElementById('icon-' + id);
+                const isPassword = input.getAttribute('type') === 'password';
+                input.setAttribute('type', isPassword ? 'text' : 'password');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+        </script>
+    @endpush
+@endonce

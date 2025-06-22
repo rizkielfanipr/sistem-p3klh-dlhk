@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel')</title>
 
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+    {{-- Vite --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    {{-- CDN / Eksternal --}}
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @stack('styles')
 </head>
 <body class="font-montserrat bg-gray-100">
 
@@ -48,6 +49,9 @@
             @yield('content')
         </main>
     </div>
+
+    {{-- Push script dari komponen --}}
+    @stack('scripts')
 
 </body>
 </html>

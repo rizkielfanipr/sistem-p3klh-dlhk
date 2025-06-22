@@ -28,43 +28,32 @@
         />
 
         {{-- Lampiran --}}
-        <div>
-            <x-form.label for="lampiran" value="File Lampiran" />
-            <input type="file" name="lampiran" id="lampiran"
-                   class="appearance-none border border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <div class="mt-2">
-                @if ($pengumuman->lampiran)
-                    <img id="preview" src="{{ asset('/' . $pengumuman->lampiran->lampiran) }}" alt="Preview" class="h-20 rounded">
-                @else
-                    <img id="preview" src="#" alt="Preview" class="hidden h-20 rounded">
-                @endif
-            </div>
-            <x-form.error name="lampiran" />
-        </div>
+        <x-form.file-upload 
+            name="lampiran" 
+            label="Ganti File Lampiran (Opsional)" 
+        />
+
+        {{-- Tampilkan Lampiran Sebelumnya --}}
+        @php
+    $lampiranPath = optional($pengumuman->lampiran)->lampiran;
+@endphp
+
+@if ($lampiranPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($lampiranPath))
+    <div class="text-sm text-gray-600 mt-2">
+        <span class="font-semibold">Lampiran saat ini:</span>
+        <a href="{{ Storage::url($lampiranPath) }}" target="_blank" class="text-blue-600 underline">
+            {{ basename($lampiranPath) }}
+        </a>
+    </div>
+@else
+    <div class="text-sm text-red-600 mt-2">Lampiran sebelumnya tidak ditemukan di server.</div>
+@endif
+
 
         {{-- Tombol Aksi --}}
         <div class="flex items-center justify-start space-x-4">
-            <x-form.button>Update</x-form.button>
-            <x-form.button type="button" href="{{ route('pengumuman.index') }}">Batal</x-form.button>
+            <x-form.button variant="primary">Update</x-form.button>
+            <x-form.button href="{{ route('pengumuman.index') }}" variant="secondary" type="button">Batal</x-form.button>
         </div>
     </form>
-
-    <script>
-        document.getElementById('lampiran').addEventListener('change', function (event) {
-            const preview = document.getElementById('preview');
-            const file = event.target.files[0];
-
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = '#';
-                preview.classList.add('hidden');
-            }
-        });
-    </script>
 @endsection

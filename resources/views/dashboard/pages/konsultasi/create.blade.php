@@ -13,23 +13,27 @@
         required 
     />
 
-    <x-form.input 
-        name="tanggal_konsultasi" 
-        label="Tanggal Konsultasi" 
-        type="date"
-        required 
-    />
+    @if($jenis !== 'daring')
+        <x-form.input 
+            name="tanggal_konsultasi" 
+            label="Tanggal Konsultasi" 
+            type="date"
+            required 
+        />
 
-    <x-form.select 
-        name="sesi_konsultasi_id" 
-        :options="$sesi->pluck('nama_sesi', 'id')" 
-        label="Sesi Konsultasi" 
-        required 
-    />
+        <x-form.select 
+            name="sesi_konsultasi_id" 
+            :options="$sesi->pluck('nama_sesi', 'id')" 
+            label="Sesi Konsultasi" 
+            required 
+        />
+    @endif
 
-    <x-form.textarea 
+    <x-quill-editor
+        label="Catatan Konsultasi" 
         name="catatan_konsultasi" 
-        label="Catatan Tambahan" 
+        :value="old('catatan_konsultasi')" 
+        placeholder="Tuliskan catatan tambahan..." 
     />
 
     <x-form.file-upload 

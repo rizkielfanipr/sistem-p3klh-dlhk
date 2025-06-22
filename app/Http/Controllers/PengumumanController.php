@@ -41,11 +41,10 @@ class PengumumanController extends Controller
 
             if ($request->hasFile('lampiran')) {
                 $file = $request->file('lampiran');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('lampiran', $filename, 'public');
+                $path = $file->store('lampiran_pengumuman', 'public');
 
                 $lampiran = Lampiran::create([
-                    'lampiran' => 'storage/' . $path
+                    'lampiran' => $path
                 ]);
 
                 $data['lampiran_id'] = $lampiran->id;
@@ -76,29 +75,34 @@ class PengumumanController extends Controller
             'lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png,docx,doc|max:2048',
         ]);
 
-        $pengumuman = Pengumuman::findOrFail($id);
+        $pengumuman = Pengumuman::with('lampiran')->findOrFail($id);
         $data = $request->only(['judul', 'konten']);
 
         try {
             DB::beginTransaction();
 
             if ($request->hasFile('lampiran')) {
-                if ($pengumuman->lampiran) {
-                    Storage::disk('public')->delete(str_replace('storage/', '', $pengumuman->lampiran->lampiran));
-                    $pengumuman->lampiran->delete();
-                }
-
-                $file = $request->file('lampiran');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('lampiran', $filename, 'public');
-
-                $lampiran = Lampiran::create([
-                    'lampiran' => 'storage/' . $path,
+                // Simpan lampiran baru terlebih dahulu
+                $path = $request->file('lampiran')->store('lampiran_pengumuman', 'public');
+                $lampiranBaru = Lampiran::create([
+                    'lampiran' => $path,
                 ]);
 
-                $data['lampiran_id'] = $lampiran->id;
-            } else {
-                $data['lampiran_id'] = $pengumuman->lampiran_id;
+                // Update foreign key di model Pengumuman terlebih dahulu
+                $data['lampiran_id'] = $lampiranBaru->id;
+
+                // Hapus lampiran lama jika ada setelah foreign key diperbarui
+                if ($pengumuman->lampiran) {
+                    Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
+                    $pengumuman->lampiran->delete();
+                }
+            } elseif ($request->input('remove_lampiran')) {
+                // Handle case where user wants to remove existing attachment without uploading a new one
+                if ($pengumuman->lampiran) {
+                    Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
+                    $pengumuman->lampiran->delete();
+                    $data['lampiran_id'] = null; // Set lampiran_id to null
+                }
             }
 
             $pengumuman->update($data);
@@ -112,32 +116,27 @@ class PengumumanController extends Controller
         }
     }
 
-public function destroy($id)
-{
-    $pengumuman = Pengumuman::with('lampiran')->findOrFail($id);
+    public function destroy($id)
+    {
+        $pengumuman = Pengumuman::with('lampiran')->findOrFail($id);
 
-    try {
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        // Simpan referensi lampiran sebelum pengumuman dihapus
-        $lampiran = $pengumuman->lampiran;
+            // Hapus file dari storage jika ada
+            if ($pengumuman->lampiran) {
+                Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
+                $pengumuman->lampiran->delete(); // Hapus record lampiran dari database
+            }
 
-        // Hapus pengumuman terlebih dahulu
-        $pengumuman->delete();
+            $pengumuman->delete(); // Hapus pengumuman itu sendiri
+            DB::commit();
 
-        // Hapus lampiran jika ada
-        if ($lampiran) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $lampiran->lampiran));
-            $lampiran->delete();
+            return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting pengumuman: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        DB::commit();
-
-        return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil dihapus.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Error deleting pengumuman: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
-}
 }

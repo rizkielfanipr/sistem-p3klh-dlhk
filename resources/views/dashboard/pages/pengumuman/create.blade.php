@@ -32,12 +32,15 @@
 
         {{-- Tombol Aksi --}}
         <div class="flex items-center space-x-4">
-            <x-form.button>Simpan</x-form.button>
-            <x-form.button href="{{ route('pengumuman.index') }}">Batal</x-form.button>
+            {{-- Tombol Simpan --}}
+            <x-form.button variant="primary">Simpan</x-form.button>
+
+            {{-- Tombol Batal --}}
+            <x-form.button variant="secondary" href="{{ route('pengumuman.index') }}">Batal</x-form.button>
         </div>
     </form>
 
-    {{-- Preview gambar --}}
+    {{-- Preview gambar (jika diinginkan) --}}
     <script>
         document.getElementById('lampiran')?.addEventListener('change', function (event) {
             const preview = document.getElementById('preview');

@@ -1,20 +1,32 @@
-@props(['name', 'options' => [], 'required' => false, 'selected' => '', 'label' => null])
+@props([
+    'name',
+    'label',
+    'options' => [],
+    'value' => null,
+    'required' => false
+])
 
-@if ($label)
-    <x-form.label :for="$name" :value="$label" />
-@else
-    <x-form.label :for="$name" :value="ucwords(str_replace('_', ' ', $name))" />
-@endif
+<div class="mb-4">
+    {{-- Label --}}
+    <label for="{{ $name }}" class="block mb-1 text-sm font-medium text-gray-700">
+        {{ $label }}
+    </label>
 
-<select name="{{ $name }}" id="{{ $name }}"
-        class="appearance-none border border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        {{ $required ? 'required' : '' }}>
-    <option value="">Pilih {{ $label ?? ucwords(str_replace('_', ' ', $name)) }}</option>
-    @foreach ($options as $key => $value)
-        <option value="{{ $key }}" {{ old($name, $selected) == $key ? 'selected' : '' }}>
-            {{ $value }}
-        </option>
-    @endforeach
-</select>
+    {{-- Select --}}
+    <select
+        name="{{ $name }}"
+        id="{{ $name }}"
+        {{ $required ? 'required' : '' }}
+        class="appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+        <option value="">-- Pilih --</option>
+        @foreach ($options as $optionValue => $optionLabel)
+            <option value="{{ $optionValue }}" {{ old($name, $value) == $optionValue ? 'selected' : '' }}>
+                {{ $optionLabel }}
+            </option>
+        @endforeach
+    </select>
 
-<x-form.error :name="$name" />
+    {{-- Error Display --}}
+    <x-form.error :name="$name" />
+</div>

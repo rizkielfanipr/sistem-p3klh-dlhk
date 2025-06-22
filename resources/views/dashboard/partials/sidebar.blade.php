@@ -47,10 +47,10 @@ $menus = [
         'label' => 'Perling',
         'icon' => 'fas fa-file-signature text-indigo-500',
         'sub' => [
-            ['label' => 'AMDAL', 'route' => '', 'icon' => 'fas fa-leaf text-green-600'],
-            ['label' => 'UKL-UPL', 'route' => '', 'icon' => 'fas fa-recycle text-blue-600'],
-            ['label' => 'DELH', 'route' => '', 'icon' => 'fas fa-water text-purple-600'],
-            ['label' => 'DPLH', 'route' => '', 'icon' => 'fas fa-tree text-emerald-600'],
+            ['label' => 'AMDAL', 'route' => 'perling.amdal', 'icon' => 'fas fa-leaf text-green-600'],
+            ['label' => 'UKL-UPL', 'route' => 'perling.uklupl', 'icon' => 'fas fa-recycle text-blue-600'],
+            ['label' => 'DELH', 'route' => 'perling.delh', 'icon' => 'fas fa-water text-purple-600'],
+            ['label' => 'DPLH', 'route' => 'perling.dplh', 'icon' => 'fas fa-tree text-emerald-600'],
         ]
     ]
 ];

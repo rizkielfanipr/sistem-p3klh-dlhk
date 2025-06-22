@@ -7,44 +7,55 @@
     @csrf
     @method('PUT')
 
+    {{-- Topik --}}
     <x-form.select 
         name="topik_id" 
         :options="$topik->pluck('nama_topik', 'id')" 
         label="Topik Konsultasi" 
-        :value="$detail->topik_id"
+        :value="old('topik_id', $detail->topik_id)"
         required 
     />
 
-    <x-form.input 
-        name="tanggal_konsultasi" 
-        label="Tanggal Konsultasi" 
-        type="date" 
-        :value="$detail->tanggal_konsultasi"
-        required 
-    />
+    @if($jenis !== 'daring')
+        {{-- Tanggal --}}
+        <x-form.input 
+            name="tanggal_konsultasi" 
+            label="Tanggal Konsultasi" 
+            type="date" 
+            :value="old('tanggal_konsultasi', $detail->tanggal_konsultasi)"
+            required 
+        />
 
-    <x-form.select 
-        name="sesi_konsultasi_id" 
-        :options="$sesi->pluck('nama_sesi', 'id')" 
-        label="Sesi Konsultasi" 
-        :value="$detail->sesi_konsultasi_id"
-        required 
-    />
+        {{-- Sesi --}}
+        <x-form.select 
+            name="sesi_konsultasi_id" 
+            :options="$sesi->pluck('nama_sesi', 'id')" 
+            label="Sesi Konsultasi" 
+            :value="old('sesi_konsultasi_id', $detail->sesi_konsultasi_id)"
+            required 
+        />
+    @endif
 
-    <x-form.textarea 
+    {{-- Catatan --}}
+    <x-quill-editor 
+        label="Catatan Konsultasi"
         name="catatan_konsultasi" 
-        label="Catatan Tambahan"
-    >{{ $detail->catatan_konsultasi }}</x-form.textarea>
+        :value="old('catatan_konsultasi', $detail->catatan_konsultasi)" 
+        placeholder="Tuliskan catatan tambahan..."
+    />
 
+    {{-- Lampiran baru --}}
     <x-form.file-upload 
         name="lampiran" 
         label="Ganti Lampiran (Opsional)"
     />
 
+    {{-- Lampiran lama --}}
     @if ($detail->lampiran)
-        <p class="text-sm text-gray-600">Lampiran sebelumnya: 
-            <a href="{{ asset('storage/' . $detail->lampiran->path) }}" class="text-blue-600 underline" target="_blank">
-                {{ $detail->lampiran->nama_file }}
+        <p class="text-sm text-gray-600">
+            Lampiran sebelumnya: 
+            <a href="{{ asset('storage/' . $detail->lampiran->lampiran) }}" class="text-blue-600 underline" target="_blank">
+                {{ basename($detail->lampiran->lampiran) }}
             </a>
         </p>
     @endif

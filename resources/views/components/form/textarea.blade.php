@@ -1,13 +1,25 @@
-@props(['name', 'required' => false, 'label' => null, 'value' => ''])
+@props([
+    'name',
+    'required' => false,
+    'label' => null,
+    'value' => ''
+])
 
-@if ($label)
-    <x-form.label :for="$name" :value="$label" />
-@else
-    <x-form.label :for="$name" :value="ucwords(str_replace('_', ' ', $name))" />
-@endif
+<div class="mb-4">
+    {{-- Label --}}
+    <label for="{{ $name }}" class="block mb-1 text-sm font-medium text-gray-700">
+        {{ $label ?? ucwords(str_replace('_', ' ', $name)) }}
+    </label>
 
-<textarea name="{{ $name }}" id="{{ $name }}"
-          {{ $required ? 'required' : '' }}
-          class="appearance-none border border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ old($name, $value) }}</textarea>
+    {{-- Textarea --}}
+    <textarea
+        name="{{ $name }}"
+        id="{{ $name }}"
+        {{ $required ? 'required' : '' }}
+        class="appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        rows="4"
+    >{{ old($name, $value) }}</textarea>
 
-<x-form.error :name="$name" />
+    {{-- Error --}}
+    <x-form.error :name="$name" />
+</div>
