@@ -4,7 +4,8 @@
     <x-navbar />
     <x-hero />
     <x-menu />
-    <x-news />
+    {{-- Passes the data to the x-news component --}}
+    <x-news :pengumumanItems="$pengumumanItems" :informasiItems="$informasiItems" />
     <x-faq />
     <x-footer />
 @endsection

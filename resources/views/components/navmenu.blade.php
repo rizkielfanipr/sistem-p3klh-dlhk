@@ -1,10 +1,10 @@
 @php
     $menuItems = [
-        ['name' => 'Beranda', 'link' => '#beranda'],
-        ['name' => 'Layanan', 'link' => '#layanan'],
-        ['name' => 'Publikasi', 'link' => '#publikasi'],
-        ['name' => 'Pengumuman', 'link' => '#pengumuman'],
-        ['name' => 'Kontak', 'link' => '#kontak']
+        ['name' => 'Beranda', 'link' => '/'], // Tetap ke root
+        ['name' => 'Layanan', 'link' => route('beranda.layanan')], // Menggunakan rute bernama
+        ['name' => 'Informasi', 'link' => route('beranda.informasi')], // Menggunakan rute bernama
+        ['name' => 'Pengumuman', 'link' => route('beranda.pengumuman')], // Menggunakan rute bernama
+        ['name' => 'Kontak', 'link' => route('beranda.kontak')] // Menggunakan rute bernama
     ];
 @endphp
 

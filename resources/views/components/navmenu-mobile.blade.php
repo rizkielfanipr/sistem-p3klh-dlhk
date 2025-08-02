@@ -2,7 +2,7 @@
     $menuItems = [
         ['name' => 'Beranda', 'link' => '#beranda'],
         ['name' => 'Layanan', 'link' => '#layanan'],
-        ['name' => 'Publikasi', 'link' => '#publikasi'],
+        ['name' => 'Informasi', 'link' => '#publikasi'],
         ['name' => 'Pengumuman', 'link' => '#pengumuman'],
         ['name' => 'Kontak', 'link' => '#kontak'],
         ['name' => 'Konsultasi', 'link' => '#', 'is_button' => true]

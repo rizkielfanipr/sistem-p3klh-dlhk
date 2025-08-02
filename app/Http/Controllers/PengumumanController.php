@@ -27,13 +27,25 @@ class PengumumanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'nama_usaha' => 'required|string|max:255',
+            'bidang_usaha' => 'required|string|max:255',
+            'skala_besaran' => 'required|string|max:255',
+            'lokasi' => 'required|string',
+            'pemrakarsa' => 'required|string|max:255',
+            'penanggung_jawab' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'dampak' => 'required|string',
             'judul' => 'required|string|max:255',
-            'konten' => 'required|string',
+            'jenis_perling' => 'required|string|max:255',
             'lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png,docx,doc|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048', // Added validation for image
         ]);
 
-        $data = $request->only(['judul', 'konten']);
-        $data['tanggal'] = Carbon::now('Asia/Jakarta');
+        $data = $request->only([
+            'nama_usaha', 'bidang_usaha', 'skala_besaran', 'lokasi', 'pemrakarsa',
+            'penanggung_jawab', 'deskripsi', 'dampak',
+            'judul', 'jenis_perling'
+        ]);
         $data['user_id'] = Auth::id();
 
         try {
@@ -48,6 +60,12 @@ class PengumumanController extends Controller
                 ]);
 
                 $data['lampiran_id'] = $lampiran->id;
+            }
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('pengumuman_images', 'public');
+                $data['image'] = $imagePath;
             }
 
             Pengumuman::create($data);
@@ -70,38 +88,59 @@ class PengumumanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'nama_usaha' => 'required|string|max:255',
+            'bidang_usaha' => 'required|string|max:255',
+            'skala_besaran' => 'required|string|max:255',
+            'lokasi' => 'required|string',
+            'pemrakarsa' => 'required|string|max:255',
+            'penanggung_jawab' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'dampak' => 'required|string',
             'judul' => 'required|string|max:255',
-            'konten' => 'required|string',
+            'jenis_perling' => 'required|string|max:255',
             'lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png,docx,doc|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048', // Added validation for image
         ]);
 
         $pengumuman = Pengumuman::with('lampiran')->findOrFail($id);
-        $data = $request->only(['judul', 'konten']);
+
+        $data = $request->only([
+            'nama_usaha', 'bidang_usaha', 'skala_besaran', 'lokasi', 'pemrakarsa',
+            'penanggung_jawab', 'deskripsi', 'dampak',
+            'judul', 'jenis_perling'
+        ]);
 
         try {
             DB::beginTransaction();
 
             if ($request->hasFile('lampiran')) {
-                // Simpan lampiran baru terlebih dahulu
                 $path = $request->file('lampiran')->store('lampiran_pengumuman', 'public');
-                $lampiranBaru = Lampiran::create([
-                    'lampiran' => $path,
-                ]);
-
-                // Update foreign key di model Pengumuman terlebih dahulu
+                $lampiranBaru = Lampiran::create(['lampiran' => $path]);
                 $data['lampiran_id'] = $lampiranBaru->id;
 
-                // Hapus lampiran lama jika ada setelah foreign key diperbarui
                 if ($pengumuman->lampiran) {
                     Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
                     $pengumuman->lampiran->delete();
                 }
             } elseif ($request->input('remove_lampiran')) {
-                // Handle case where user wants to remove existing attachment without uploading a new one
                 if ($pengumuman->lampiran) {
                     Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
                     $pengumuman->lampiran->delete();
-                    $data['lampiran_id'] = null; // Set lampiran_id to null
+                    $data['lampiran_id'] = null;
+                }
+            }
+
+            // Handle image update
+            if ($request->hasFile('image')) {
+                if ($pengumuman->image) {
+                    Storage::disk('public')->delete($pengumuman->image);
+                }
+                $imagePath = $request->file('image')->store('pengumuman_images', 'public');
+                $data['image'] = $imagePath;
+            } elseif ($request->input('remove_image')) { // Add a hidden field 'remove_image' in the form if you want to allow removal without new upload
+                if ($pengumuman->image) {
+                    Storage::disk('public')->delete($pengumuman->image);
+                    $data['image'] = null;
                 }
             }
 
@@ -123,13 +162,17 @@ class PengumumanController extends Controller
         try {
             DB::beginTransaction();
 
-            // Hapus file dari storage jika ada
             if ($pengumuman->lampiran) {
                 Storage::disk('public')->delete($pengumuman->lampiran->lampiran);
-                $pengumuman->lampiran->delete(); // Hapus record lampiran dari database
+                $pengumuman->lampiran->delete();
             }
 
-            $pengumuman->delete(); // Hapus pengumuman itu sendiri
+            // Delete associated image
+            if ($pengumuman->image) {
+                Storage::disk('public')->delete($pengumuman->image);
+            }
+
+            $pengumuman->delete();
             DB::commit();
 
             return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil dihapus.');
@@ -138,5 +181,25 @@ class PengumumanController extends Controller
             Log::error('Error deleting pengumuman: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+    }
+
+    public function show($id)
+    {
+        $pengumuman = Pengumuman::with(['user', 'lampiran', 'tanggapan'])->findOrFail($id);
+
+        return view('dashboard.pages.pengumuman.detail', [
+            'pengumuman' => $pengumuman,
+            'title' => 'Detail Pengumuman',
+        ]);
+    }
+
+    public function showDetailUser($id)
+    {
+        $pengumuman = Pengumuman::with(['user', 'lampiran', 'tanggapan'])->findOrFail($id);
+
+        return view('pengumuman.detail', [
+            'pengumuman' => $pengumuman,
+            'title' => 'Detail Pengumuman',
+        ]);
     }
 }

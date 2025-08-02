@@ -14,8 +14,8 @@
                 Daerah Istimewa Yogyakarta
             </h1>
             <p class="text-base sm:text-sm md:text-md font-light">
-                Informasi Pelayanan dan Proses pengurusan persetujuan lingkungan<br class="hidden md:block" />
-                (AMDAL, UKL UPL, SPPL, DELH, DPLH)
+                Informasi, Konsultasi & Pengajuan Persetujuan Lingkungan<br class="hidden md:block" />
+                (AMDAL, UKL UPL, DELH, DPLH)
             </p>
         </div>
     </div>

@@ -33,7 +33,8 @@ class Konsultasi extends Model
 
     public function tindakLanjut()
     {
-        return $this->hasOne(TindakLanjutKonsultasi::class);
+        // Asumsi foreign key di tabel 'tindak_lanjut_konsultasi' adalah 'konsultasi_id'
+        return $this->hasMany(TindakLanjutKonsultasi::class);
     }
 }
 

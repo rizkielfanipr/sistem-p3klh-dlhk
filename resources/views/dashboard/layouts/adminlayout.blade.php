@@ -52,6 +52,6 @@
 
     {{-- Push script dari komponen --}}
     @stack('scripts')
-
+@yield('scripts')
 </body>
 </html>

@@ -23,12 +23,40 @@
             placeholder="Masukkan Nama Usaha"
         />
 
+        {{-- New field: Bidang Usaha --}}
         <x-form.input
-            name="alamat_usaha"
-            label="Alamat Usaha"
-            value="{{ old('alamat_usaha') }}"
+            name="bidang_usaha"
+            label="Bidang Usaha"
+            value="{{ old('bidang_usaha') }}"
             required
-            placeholder="Masukkan Alamat Usaha"
+            placeholder="Masukkan Bidang Usaha"
+        />
+
+        {{-- Changed from alamat_usaha to lokasi --}}
+        <x-form.input
+            name="lokasi"
+            label="Lokasi Usaha" {{-- Label changed to reflect 'Lokasi' --}}
+            value="{{ old('lokasi') }}"
+            required
+            placeholder="Masukkan Lokasi Usaha"
+        />
+
+        {{-- New field: Pemrakarsa --}}
+        <x-form.input
+            name="pemrakarsa"
+            label="Nama Pemrakarsa"
+            value="{{ old('pemrakarsa') }}"
+            required
+            placeholder="Masukkan Nama Pemrakarsa"
+        />
+
+        {{-- New field: Penanggung Jawab --}}
+        <x-form.input
+            name="penanggung_jawab"
+            label="Nama Penanggung Jawab"
+            value="{{ old('penanggung_jawab') }}"
+            required
+            placeholder="Masukkan Nama Penanggung Jawab"
         />
 
         <x-form.select

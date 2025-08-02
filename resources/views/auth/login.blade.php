@@ -15,14 +15,25 @@
             </div>
 
             <h2 class="text-xl font-semibold text-left py-4">Masuk Akun</h2>
+
+            {{-- Include Toast Component for success/error messages --}}
+            @include('components.toast')
             
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 @component('components.input', ['name' => 'email', 'label' => 'Email', 'type' => 'email']) @endcomponent
+                {{-- Display validation error for email --}}
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
 
                 <!-- Kolom password dengan link lupa password di sebelah kanan -->
                 <div class="mb-6 relative">
                     @component('components.password', ['name' => 'password', 'label' => 'Password']) @endcomponent
+                    {{-- Display validation error for password --}}
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                     <div class="absolute right-0 top-0 text-xs mb-2 mr-1">
                         <a href="#" class="text-blue-900">Lupa Password?</a>
                     </div>
